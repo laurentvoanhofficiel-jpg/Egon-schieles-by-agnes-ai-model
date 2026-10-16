@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Egon Schiele Lab v2 — Visual.Studio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#1a0f0a;color:#e8dcc8;min-height:100vh;padding:1rem 1rem 12rem;font-size:14px;line-height:1.5}
+.wrap{max-width:1300px;margin:0 auto}
+header{text-align:center;padding:1.5rem 0;border-bottom:1px solid #3d2418;margin-bottom:1.5rem}
+h1{font-family:Georgia,serif;font-size:2.4rem;font-weight:300;letter-spacing:.02em;margin-bottom:.4rem;background:linear-gradient(135deg,#c44536 0%,#e87b35 25%,#e5c15a 50%,#a88b4a 75%,#8b5a2b 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05}
+.sub{font-family:Georgia,serif;font-style:italic;font-size:.85rem;color:#8a7a5c}
+.kata{font-size:.7rem;letter-spacing:.4em;color:#e5c15a;opacity:.75;text-transform:uppercase;margin-bottom:.5rem}
+.banner{background:linear-gradient(135deg,rgba(196,69,54,.08),rgba(139,90,43,.06));border:1px solid #3d2418;border-left:3px solid #c44536;border-radius:4px;padding:1rem 1.15rem;font-size:.78rem;color:#a89578;margin-bottom:1.2rem;line-height:1.65;font-family:Georgia,serif}
+.banner strong{color:#e8dcc8}
+.banner .hl-r{color:#e87b35}.banner .hl-y{color:#e5c15a}.banner .hl-g{color:#a88b4a}
+.card{background:#231409;border:1px solid #3d2418;border-radius:4px;margin-bottom:1rem;overflow:hidden}
+.card-head{padding:.85rem 1rem;border-bottom:1px solid #3d2418;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:#d4c5a8;font-weight:600;font-family:Georgia,serif}
+.card-head .badge{font-size:.6rem;padding:.15rem .5rem;border:1px solid #8b5a2b;color:#e5c15a;border-radius:2px;letter-spacing:.1em;background:rgba(139,90,43,.15)}
+.card-body{padding:1rem}
+textarea,input[type=text]{width:100%;background:#150c06;border:1px solid #3d2418;border-radius:4px;padding:.7rem .85rem;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.78rem;color:#e8dcc8;outline:none}
+textarea:focus,input:focus{border-color:#c44536;box-shadow:0 0 0 3px rgba(196,69,54,.15)}
+textarea{min-height:80px;resize:vertical;line-height:1.55}
+.btn{width:100%;padding:.75rem;border-radius:4px;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .15s;font-family:Georgia,serif}
+.btn-amber{background:linear-gradient(135deg,rgba(232,123,53,.18),rgba(229,193,90,.1));border-color:#8b5a2b;color:#e5c15a}
+.btn-amber:hover:not(:disabled){background:rgba(232,123,53,.28)}
+.btn-amber:disabled{opacity:.3;cursor:not-allowed}
+.btn-red{background:transparent;border-color:#7f1d1d;color:#f87171;display:none}
+.btn-red.visible{display:block}
+.btn-slate{background:transparent;border-color:#3d2418;color:#a89578;font-size:.66rem;padding:.5rem;font-family:-apple-system,sans-serif}
+.btn-slate:hover{color:#e87b35;border-color:#8b5a2b}
+.btn-mega{background:linear-gradient(135deg,#c44536,#8b5a2b,#e5c15a);border:none;color:#1a0f0a;padding:1rem;font-size:.85rem;letter-spacing:.18em;border-radius:5px;box-shadow:0 4px 20px rgba(196,69,54,.3);font-family:Georgia,serif;font-weight:700}
+.btn-mega:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 28px rgba(196,69,54,.5)}
+.btn-mega:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.row{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
+.row .btn{width:auto;flex:1;min-width:100px}
+.status{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:#150c06;border:1px solid #3d2418;border-radius:4px;font-size:.72rem;color:#8a7a5c;margin-top:.5rem}
+.status.ok{background:rgba(16,185,129,.08);border-color:#065f46;color:#34d399}
+.status.err{background:rgba(196,69,54,.1);border-color:#7f1d1d;color:#f87171}
+.status.warn{background:rgba(229,193,90,.08);border-color:#8b5a2b;color:#e5c15a}
+.status .dot{width:6px;height:6px;border-radius:50%;background:#4a3828;flex-shrink:0}
+.status.ok .dot{background:#10b981;box-shadow:0 0 6px #10b981}
+.status.err .dot{background:#c44536}
+.status.warn .dot{background:#e5c15a}
+.hint{font-size:.68rem;color:#8a7a5c;margin-top:.4rem;font-family:Georgia,serif;font-style:italic}
+.drop{border:2px dashed #4a3828;border-radius:4px;padding:1.5rem 1rem;text-align:center;cursor:pointer;position:relative;transition:all .15s;background:#150c06}
+.drop:hover{border-color:#c44536;background:rgba(196,69,54,.04)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop .icon{font-size:2rem;opacity:.5;margin-bottom:.4rem}
+.drop .txt{font-size:.82rem;color:#a89578;font-family:Georgia,serif}
+.drop .txt strong{color:#e5c15a}
+.drop .sub{font-size:.68rem;color:#5a4838;margin-top:.4rem;font-family:ui-monospace,monospace}
+.preview{margin-top:.8rem;text-align:center}
+.preview img{max-width:100%;max-height:280px;border:2px solid #8b5a2b;border-radius:4px;display:block;margin:0 auto;box-shadow:0 0 30px rgba(139,90,43,.2)}
+.preview .name{font-size:.66rem;color:#e5c15a;font-family:ui-monospace,monospace;margin-top:.4rem}
+.analysis{background:#150c06;border:1px solid #3d2418;border-radius:4px;padding:.75rem;margin-top:.7rem;font-size:.7rem;font-family:ui-monospace,monospace;color:#a89578;max-height:340px;overflow-y:auto;white-space:pre-wrap;display:none;line-height:1.55}
+.analysis.visible{display:block}
+.analysis .k{color:#e5c15a;font-weight:700}
+.raw-panel{background:#0a0603;border:1px solid #7f1d1d;border-radius:4px;padding:.75rem;margin-top:.75rem;font-family:ui-monospace,monospace;font-size:.68rem;color:#c44536;white-space:pre-wrap;max-height:280px;overflow-y:auto;line-height:1.5;display:none}
+.raw-panel.visible{display:block}
+.manual-box{background:#150c06;border:1px solid #3d2418;border-radius:4px;padding:.75rem;margin-top:.7rem;display:none}
+.manual-box.visible{display:block}
+.manual-box .mb-title{font-family:Georgia,serif;font-size:.85rem;color:#e5c15a;margin-bottom:.4rem;font-style:italic}
+.manual-box .mb-hint{font-size:.68rem;color:#8a7a5c;margin-bottom:.5rem;line-height:1.5;font-family:Georgia,serif}
+.manual-box textarea{min-height:100px;font-size:.75rem;line-height:1.6}
+.phase{background:#231409;border:1px solid #3d2418;border-left:2px solid #c44536;border-radius:4px;padding:.75rem 1rem;margin-bottom:1rem;display:none}
+.phase.visible{display:block}
+.phase-info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem;font-size:.72rem;font-family:ui-monospace,monospace;color:#a89578}
+
+.concept-grid{display:grid;grid-template-columns:1fr;gap:.6rem;margin-bottom:1rem}
+@media(min-width:640px){.concept-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.concept-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(min-width:1400px){.concept-grid{grid-template-columns:1fr 1fr 1fr 1fr}}
+.concept{background:#231409;border:2px solid #3d2418;border-radius:5px;padding:.75rem .85rem;cursor:pointer;transition:all .15s;position:relative;font-family:Georgia,serif}
+.concept:hover{border-color:#8b5a2b;transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,90,43,.15)}
+.concept.on{border-color:#c44536;background:linear-gradient(135deg,rgba(196,69,54,.12),rgba(139,90,43,.06));box-shadow:0 0 0 2px rgba(196,69,54,.25)}
+.concept.on::after{content:'✓';position:absolute;top:8px;right:10px;color:#e5c15a;font-size:1.1rem;font-weight:700;font-family:-apple-system,sans-serif}
+.concept .year{font-size:.58rem;color:#8b5a2b;font-family:ui-monospace,monospace;letter-spacing:.14em;font-weight:700;margin-bottom:.2rem}
+.concept .name{font-size:.92rem;color:#e8dcc8;font-weight:600;line-height:1.25;margin-bottom:.3rem;font-family:Georgia,serif}
+.concept.on .name{color:#e5c15a}
+.concept .desc{font-size:.66rem;color:#a89578;font-style:italic;line-height:1.4;font-family:Georgia,serif}
+
+.control-panel{background:linear-gradient(135deg,rgba(196,69,54,.06),rgba(139,90,43,.04));border:1px solid #3d2418;border-left:3px solid #c44536;border-radius:5px;padding:1.1rem;margin-bottom:1rem}
+.control-panel .info{font-size:.78rem;color:#a89578;margin-bottom:.9rem;line-height:1.6;font-family:Georgia,serif}
+.control-panel .info strong{color:#e5c15a}
+.control-panel .info .sel{color:#e87b35;font-weight:700}
+.control-panel .row{margin-top:.4rem}
+.control-panel input[type=number]{width:90px;background:#150c06;border:1px solid #3d2418;border-radius:4px;color:#e8dcc8;padding:.55rem;font-family:ui-monospace,monospace;font-size:.78rem;text-align:center}
+.control-panel label{display:block;font-size:.62rem;color:#8a7a5c;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.12em;font-family:ui-monospace,monospace}
+
+.progress-bar{height:6px;background:#150c06;border-radius:3px;overflow:hidden;margin-top:.7rem}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#c44536,#e87b35,#e5c15a);width:0%;transition:width .3s;border-radius:3px}
+.progress-bar .fill.done{background:linear-gradient(90deg,#10b981,#34d399)}
+.batch-info{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.7rem;font-family:ui-monospace,monospace;color:#8a7a5c;margin-top:.6rem;padding-top:.6rem;border-top:1px solid #3d2418}
+.batch-info strong{color:#e5c15a}
+
+.grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1.5rem}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.grid{grid-template-columns:1fr 1fr 1fr}}
+@media(min-width:1400px){.grid{grid-template-columns:1fr 1fr 1fr 1fr}}
+.photo{background:#231409;border:1px solid #3d2418;border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.photo-img{aspect-ratio:9/16;background:#0a0603;display:flex;align-items:center;justify-content:center;position:relative}
+.photo-img img{width:100%;height:100%;object-fit:contain;display:block}
+.photo-img .load{width:100%;height:100%;background:#0a0603;display:flex;align-items:center;justify-content:center;color:#4a3828;font-size:.72rem;font-family:ui-monospace,monospace;position:relative;overflow:hidden;flex-direction:column;gap:.5rem}
+.photo-img .load::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(196,69,54,.08) 50%,transparent 70%);animation:shim 1.8s linear infinite}
+@keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.photo-img .err{width:100%;height:100%;background:rgba(196,69,54,.1);display:flex;align-items:center;justify-content:center;color:#f87171;font-size:.7rem;text-align:center;padding:.6rem;flex-direction:column;gap:.3rem}
+.photo-img .err small{color:#a89578;font-size:.6rem;font-family:ui-monospace,monospace}
+.photo-meta{padding:.7rem;border-top:1px solid #3d2418;flex:1;display:flex;flex-direction:column;gap:.4rem}
+.pbadge{display:inline-block;font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;padding:.15rem .5rem;border-radius:2px;margin-right:.3rem;margin-bottom:.3rem;font-weight:700;border:1px solid;font-family:ui-monospace,monospace}
+.pbadge.num{background:rgba(232,123,53,.12);color:#e87b35;border-color:#8b5a2b}
+.pbadge.schiele{background:rgba(196,69,54,.12);color:#c44536;border-color:#7f1d1d}
+.ptitle{font-family:Georgia,serif;font-size:.85rem;color:#e5c15a;margin-bottom:.3rem;line-height:1.3;font-style:italic}
+.pblock{background:#150c06;border:1px solid #3d2418;border-radius:4px;padding:.55rem;position:relative;margin-top:auto}
+.pblock.video{border-left:2px solid #8b5a2b;margin-top:.4rem}
+.plabel{font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:#8a7a5c;font-family:ui-monospace,monospace;margin-bottom:.35rem}
+.pblock.video .plabel{color:#e5c15a}
+.ptext{font-size:.6rem;color:#a89578;font-family:ui-monospace,monospace;line-height:1.45;max-height:120px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;padding-right:3.5rem}
+.pcopy{position:absolute;top:.4rem;right:.4rem;font-size:.55rem;padding:.15rem .4rem;border:1px solid #3d2418;border-radius:2px;background:transparent;color:#8a7a5c;cursor:pointer;font-family:-apple-system,sans-serif}
+.pcopy:hover{color:#e5c15a;border-color:#8b5a2b}
+.popen{display:block;text-align:center;margin-top:.4rem;font-size:.58rem;text-transform:uppercase;letter-spacing:.15em;padding:.4rem;border:1px solid #3d2418;border-radius:4px;color:#a89578;text-decoration:none;font-family:-apple-system,sans-serif}
+.popen:hover{color:#e5c15a;border-color:#8b5a2b}
+
+.panel{position:fixed;bottom:0;left:0;right:0;z-index:40}
+.handle{background:#231409;border-top:2px solid #8b5a2b;padding:.55rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;gap:.5rem}
+.handle .toggle{font-family:ui-monospace,monospace;font-size:.72rem;color:#e5c15a;letter-spacing:.1em;flex-shrink:0}
+.handle .latest{font-size:.72rem;color:#a89578;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left;padding-left:.5rem}
+.handle button{font-size:.6rem;padding:.2rem .5rem;border:1px solid #3d2418;border-radius:3px;background:transparent;color:#8a7a5c;cursor:pointer;font-family:-apple-system,sans-serif}
+.handle button:hover{color:#e5c15a;border-color:#8b5a2b}
+.panel-content{background:#150c06;border-top:1px solid #3d2418;max-height:55vh;overflow-y:auto}
+.panel-content.hidden{display:none}
+.human-log{max-height:100px;overflow-y:auto;padding:.6rem 1rem;border-bottom:1px solid #3d2418;font-family:ui-monospace,monospace;font-size:.7rem}
+.human-log>div{margin-bottom:.2rem}
+.human-log .t{color:#4a3828}
+.human-log .m{color:#a88b4a}
+.debug-log{max-height:240px;overflow-y:auto;padding:.6rem 1rem;font-family:ui-monospace,monospace;font-size:.66rem;line-height:1.5}
+.debug-log>div{margin-bottom:.15rem;word-break:break-word}
+.debug-log .t{color:#4a3828}
+.debug-log .info{color:#a89578}
+.debug-log .ok{color:#a88b4a}
+.debug-log .warn{color:#e5c15a}
+.debug-log .err{color:#f87171}
+.debug-log .api{color:#e87b35}
+.debug-log .raw{color:#c44536;background:#0a0603;padding:.3rem .5rem;border-radius:3px;display:block;margin:.2rem 0;white-space:pre-wrap;font-size:.62rem;line-height:1.45;max-height:180px;overflow-y:auto}
+
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-120px);background:#231409;border:1px solid #3d2418;border-left:3px solid #e5c15a;border-radius:4px;padding:.75rem 1.2rem;font-size:.8rem;z-index:1000;opacity:0;transition:transform .3s,opacity .3s;max-width:90vw;text-align:center;font-family:Georgia,serif}
+.toast.visible{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.success{border-left-color:#10b981}
+.toast.error{border-left-color:#c44536}
+.toast.warn{border-left-color:#e5c15a}
+.status-bar{position:fixed;bottom:60px;left:0;right:0;background:#231409;border-top:1px solid #3d2418;padding:.5rem 1rem;font-size:.7rem;font-family:ui-monospace,monospace;color:#e8dcc8;display:flex;align-items:center;gap:.5rem;transform:translateY(100%);transition:transform .3s;z-index:30}
+.status-bar.visible{transform:translateY(0)}
+.status-bar .spinner{width:12px;height:12px;border:2px solid rgba(196,69,54,.2);border-top-color:#c44536;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#150c06}
+::-webkit-scrollbar-thumb{background:#4a3828;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#8b5a2b}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<div class="kata">✦ Egon Schiele Lab · v2 ✦</div>
+<h1>Egon Schiele Lab</h1>
+<p class="sub">Vingt concepts viennois · texte-vers-image pur · analyse tolérante</p>
+</header>
+
+<div class="banner">
+<strong>v2 — corrections majeures :</strong> analyse vision <strong class="hl-y">tolérante</strong> (si le modèle renvoie du texte brut, on l'utilise quand même) · <strong class="hl-r">fallback manuel</strong> si l'analyse échoue complètement · génération <strong class="hl-g">100% texte-vers-image</strong> (aucun envoi d'image à l'API, conformément à ce que le modèle supporte réellement) · panneau de diagnostic pour voir la réponse brute.
+</div>
+
+<!-- ═══ CLÉS API ═══ -->
+<section class="card">
+<div class="card-head"><span>🔑 Clés API Agnes</span><span class="badge" id="keyBadge">0 validée</span></div>
+<div class="card-body">
+<textarea id="keysInput" placeholder="Collez vos clés API ici, une par ligne :&#10;sk-xxxxxxxxxxxx&#10;sk-yyyyyyyyyyyy" autocomplete="off" spellcheck="false"></textarea>
+<div class="row">
+<button class="btn btn-amber" id="validateBtn">🔐 Valider et enregistrer</button>
+<button class="btn btn-slate" id="clearBtn" style="width:auto;min-width:80px;">Effacer</button>
+</div>
+<div class="status" id="keyStatus"><span class="dot"></span><span id="keyStatusText">Aucune clé enregistrée</span></div>
+<div class="hint">Rotation auto · paceur 3.4s/clé · retry ×6 sur 429/502/503/504 · fallback texte-vers-image pur.</div>
+</div>
+</section>
+
+<!-- ═══ IMAGE DE RÉFÉRENCE ═══ -->
+<section class="card">
+<div class="card-head"><span>🖼️ Photo de référence (analyse visage)</span><span class="badge" id="refBadge">0 image</span></div>
+<div class="card-body">
+<label class="drop">
+<input type="file" accept="image/*" id="refInput">
+<div class="icon">📷</div>
+<div class="txt"><strong>Cliquez pour choisir une photo</strong><br>Elle sert UNIQUEMENT à extraire une description textuelle du visage</div>
+<div class="sub">⚠️ La photo n'est jamais envoyée à l'API de génération — uniquement au modèle d'analyse visuelle.</div>
+</label>
+<div class="preview hidden" id="refPreview">
+<img id="refPreviewImg" alt="">
+<div class="name" id="refPreviewName"></div>
+<div class="row" style="justify-content:center;">
+<button class="btn btn-amber" id="analyzeBtn" style="max-width:220px;">🔍 Analyser le visage</button>
+<button class="btn btn-slate" id="removeRefBtn" style="max-width:120px;">Retirer</button>
+</div>
+</div>
+<div class="analysis" id="analysisBox"></div>
+
+<div class="manual-box" id="manualBox">
+<div class="mb-title">✍️ Fallback manuel — décris toi-même le visage</div>
+<div class="mb-hint">Si l'analyse automatique échoue, écris ici en anglais une description du visage (comme si tu décrivais un portrait-robot). L'IA l'utilisera telle quelle dans chaque prompt.</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.5rem;">
+<div>
+<input type="text" id="manualSex" placeholder="sexe (female / male)" autocomplete="off">
+</div>
+<div>
+<input type="text" id="manualAge" placeholder="âge (ex: mid twenties)" autocomplete="off">
+</div>
+</div>
+<textarea id="manualFaceDna" placeholder="Forensic English description of the face: skull shape, face shape, jaw, chin, forehead, cheekbones, eyebrows, eyes, nose, lips, skin tone, freckles/moles, hair color/length/texture/style."></textarea>
+<div class="row" style="margin-top:.5rem;">
+<button class="btn btn-amber" id="applyManualBtn" style="width:auto;min-width:200px;">✓ Utiliser cette description</button>
+</div>
+</div>
+
+<div class="raw-panel" id="rawPanel"></div>
+</div>
+</section>
+
+<!-- ═══ CONCEPTS SCHIELE ═══ -->
+<section class="card">
+<div class="card-head"><span>✦ Vingt concepts Egon Schiele</span><span class="badge" id="conceptBadge">0 sélectionné</span></div>
+<div class="card-body">
+<div class="concept-grid" id="conceptGrid"></div>
+<div class="row">
+<button class="btn btn-slate" id="selectAllBtn">Tout sélectionner</button>
+<button class="btn btn-slate" id="selectNoneBtn">Tout désélectionner</button>
+</div>
+</div>
+</section>
+
+<!-- ═══ PANNEAU DE CONTRÔLE ═══ -->
+<div class="control-panel">
+<div class="info" id="controlInfo">
+Sélectionnez un ou plusieurs concepts ci-dessus, puis lancez la génération.
+</div>
+<div class="row" style="align-items:flex-end;gap:.6rem;">
+<div>
+<label>Images par concept</label>
+<input type="number" id="countInput" value="3" min="1" max="10">
+</div>
+<div style="flex:2;">
+<button class="btn btn-mega" id="genBtn" disabled>✦ Générer</button>
+</div>
+</div>
+<div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+<div class="batch-info">
+<span>Total <strong id="totalCount">0 / 0</strong></span>
+<span>En cours <strong id="queueCount">0</strong></span>
+<span id="rpmInfo"></span>
+</div>
+</div>
+
+<button class="btn btn-red" id="stopBtn">⏹ Arrêter la génération</button>
+
+<div class="phase" id="phaseBar">
+<div class="phase-info"><span id="phaseDetail">En attente</span><span id="phaseEta"></span></div>
+</div>
+
+<!-- ═══ RÉSULTATS ═══ -->
+<div id="resultsHeader" class="hidden" style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .8rem;flex-wrap:wrap;gap:.5rem;">
+<div style="font-family:Georgia,serif;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;color:#e5c15a;">✦ Œuvres générées</div>
+<div id="resultsCount" style="font-size:.72rem;font-family:ui-monospace,monospace;color:#a89578;">0 / 0</div>
+</div>
+<div class="grid" id="photoGrid"></div>
+
+</div>
+
+<!-- ═══ CONSOLE ═══ -->
+<div class="panel">
+<div class="handle" id="panelHandle">
+<span class="toggle" id="panelToggle">▼ CONSOLE</span>
+<span class="latest" id="humanLatest">Prêt.</span>
+<button id="copyConsoleBtn">Copier</button>
+<button id="clearConsoleBtn">Effacer</button>
+</div>
+<div class="panel-content hidden" id="panelContent">
+<div class="human-log" id="humanLog"></div>
+<div class="debug-log" id="debugLog"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"><span id="toastText">Message</span></div>
+<div class="status-bar" id="statusBar"><div class="spinner"></div><span id="statusText">Préparation…</span></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+const API_BASE = 'https://apihub.agnes-ai.com/v1';
+const MODEL_TEXT = 'agnes-2.5-flash';
+const MODEL_IMAGE = 'agnes-image-2.1-flash';
+const IMAGE_SIZE = '1024x1792';
+const CONCURRENCY_PER_KEY = 1;
+const DELAY_PER_KEY_MS = 3400;
+const REF_MAX_SIDE = 1024;
+const KEYS_STORAGE = 'esl_keys_v2';
+const REF_STORAGE = 'esl_ref_v2';
+const MANUAL_STORAGE = 'esl_manual_v2';
+const CONCEPTS_STORAGE = 'esl_concepts_v2';
+const DEBUG_MAX = 400;
+const MAX_ATTEMPTS = 6;
+
+// ═══════════════════════════════════════════════════════════════
+// 20 CONCEPTS
+// ═══════════════════════════════════════════════════════════════
+const CONCEPTS = [
+  { id:'self_raised_shoulder', year:'1912', name:'Autoportrait — épaule dénudée', desc:'Buste anguleux, épaule nue, regard insistant',
+    style:'Egon Schiele 1912 self-portrait style, bare shoulder raised, angular gaunt face, raw ink contour lines, muted ochre and dusty flesh tones with a vivid carmine red accent, contorted neck, unsettling direct stare, visible paper texture, watercolor and gouache on aged paper',
+    pose:'three-quarter bust portrait, one bare shoulder raised and turned toward the viewer, chin tilted, direct unsettling gaze into the camera',
+    video:'Slow subtle breathing motion, minimal head tilt, direct unsettling gaze held, no blinking, cinematic 4-second ambient loop.' },
+  { id:'self_grimace', year:'1910', name:'Autoportrait — grimace', desc:'Visage tordu, bouche ouverte, tension nerveuse',
+    style:'Egon Schiele 1910 self-portrait, gaunt twisted face, open grimacing mouth, raw nervous linework, brown ink and muted watercolor, thin elongated neck, brown-red shadows, aged paper grain, unsettling expressionist tension',
+    pose:'frontal close-up bust, head slightly tilted, mouth open in a nervous grimace, veins visible on temple, muscles tense',
+    video:'Subtle trembling of the jaw, slight head twitch, unsettling micro-movements, muted palette, ambient tension.' },
+  { id:'self_lanterns', year:'1912', name:'Autoportrait aux lanternes chinoises', desc:'Yeux baissés, mains croisées, lanternes rouges',
+    style:'Egon Schiele 1912 self-portrait with Chinese lanterns, downcast eyes, hands crossed at chest with elongated bony fingers, muted olive and amber watercolor, vivid orange Chinese lanterns scattered around, angular shoulders, raw ink outline, aged paper texture',
+    pose:'frontal bust, hands crossed at the chest, head slightly bowed, downcast eyes, elongated knuckles emphasized',
+    video:'Very slow gentle sway, hands remain crossed, subtle shift of the lanterns in the background, moody amber ambience.' },
+  { id:'self_hands_chest', year:'1911', name:'Autoportrait — mains sur la poitrine', desc:'Mains osseuses crispées sur le torse nu',
+    style:'Egon Schiele 1911 self-portrait with hands on chest, naked emaciated torso, pale flesh with green and mauve undertones, raw ink lines, elongated bony hands clutched at the sternum, contorted shoulders, watercolor and gouache on paper',
+    pose:'three-quarter bust, bare chest, both hands clutched at the sternum with elongated bony fingers, shoulders hunched forward, intense stare',
+    video:'Slight rise and fall of the chest, subtle clench and release of the hands, unsettling stillness.' },
+  { id:'embrace', year:'1917', name:"L'Étreinte (Die Umarmung)", desc:'Deux corps enlacés, draps froissés, tendresse',
+    style:'Egon Schiele 1917 "Die Umarmung" (The Embrace), two emaciated figures intertwined on crumpled white sheets, angular intertwined limbs, muted flesh tones with ochre and rose, raw ink contour, tender yet unsettling, watercolor and gouache on paper',
+    pose:'two figures embracing on a bed, limbs entwined, heads pressed together, eyes closed, angular shoulders and hips, sheets crumpled around them',
+    video:'Slow rhythmic breathing of the two figures, subtle shift of the sheets, heads pressed together, no direct gaze.' },
+  { id:'couple_seated', year:'1915', name:'Couple assis', desc:'Deux figures assises, mains mêlées, vide autour',
+    style:'Egon Schiele 1915 seated couple, two angular figures seated side by side, long bony hands intertwined, empty pale background, raw ink lines, muted ochre and grey watercolor, clinical pose, unsettling tenderness',
+    pose:'two figures seated side by side on a simple wooden bench, hands intertwined in the center, both facing the camera, neutral expressions, elongated bodies',
+    video:'Very subtle shift of the shoulders and hands, breathing rhythm visible, background remains empty, cinematic stillness.' },
+  { id:'mother_child', year:'1912', name:'Mère et enfant', desc:'Mère squelettique, enfant blotti, tension tragique',
+    style:'Egon Schiele 1912 mother and child, emaciated mother with hollow cheeks, small child pressed against her, raw ink outline, pale flesh tones with green and ochre undertones, watercolor and gouache on aged paper, tragic tenderness',
+    pose:"seated mother holding a small child against her chest, both facing the camera, mother's long bony arms wrapped around, hollow cheeks, gaunt expression",
+    video:'Gentle breathing, subtle protection gesture, child remains still, melancholic ambience, muted palette.' },
+  { id:'dead_mother', year:'1910', name:'Mère morte', desc:'Mère aux yeux clos, enfant suspendu, tragédie',
+    style:'Egon Schiele 1910 "Dead Mother", a mother with closed eyes lying flat, a small pale child floating above her, raw ink contour, violent carmine red drapery, muted ochre and grey, expressionist tragedy, watercolor on aged paper',
+    pose:'mother lying flat with closed eyes, small child floating above her, arms extended toward the child, entirely frontal composition, raw tension',
+    video:'Absolute stillness of the dead mother, very slow drift of the child, silent tragic mood, no movement in the eyes.' },
+  { id:'black_stockings', year:'1913', name:'Femme aux bas noirs', desc:'Bas noirs tendus, jupe relevée, jambe pliée',
+    style:'Egon Schiele 1913 "Woman with Black Stockings", seated woman with one knee raised, black stockings stretched taut, bright red dress lifted, raw ink contour, pale flesh with rose and ochre, muted background, unsettling direct gaze',
+    pose:'woman seated with one knee raised, black stockings stretched, red dress hitched up, one hand resting on the thigh, direct unsettling gaze',
+    video:'Slow shift of weight, subtle movement of the raised leg, no change in the staring gaze, muted ambience.' },
+  { id:'girl_hair_down', year:'1910', name:'Fille aux cheveux dénoués', desc:'Cheveux longs, épaules nues, tendresse brute',
+    style:'Egon Schiele 1910 "Girl with Hair Down", young woman with long dark hair loose around bare shoulders, raw ink linework, muted ochre and dusty rose watercolor, gaunt angular shoulders, unsettling tenderness, aged paper texture',
+    pose:'frontal bust, long dark hair loose around bare shoulders, head slightly bowed, direct calm gaze, elongated neck',
+    video:'Gentle movement of the loose hair, subtle turn of the head, breathing rhythm, warm muted ambience.' },
+  { id:'seated_bent_knee', year:'1917', name:'Femme assise au genou plié', desc:'Genou levé, coude posé, tension contenue',
+    style:'Egon Schiele 1917 "Seated Woman with Bent Knee", woman seated with one knee raised and both arms folded above the knee, angular gaunt body, raw ink contour, muted ochre and grey watercolor, green dress, unsettling stillness',
+    pose:'woman seated with one knee raised, both arms folded above the knee, direct gaze, elongated hands, angular shoulders',
+    video:'Subtle stillness, breathing rhythm visible in the chest, absolute calm gaze, muted palette.' },
+  { id:'crouching_woman', year:'1918', name:'Femme accroupie', desc:'Corps ramassé, contours noirs, tension animale',
+    style:'Egon Schiele 1918 crouching woman, body gathered in an angular crouch, raw black ink outline, bare flesh with muted rose, ochre and green undertones, watercolor on paper, animal tension, unsettling gaze',
+    pose:'woman crouching low on the ground, knees gathered, arms wrapped around the shins, direct gaze up at the camera, angular shoulders',
+    video:'Subtle animal-like breathing, micro shift of the weight on the feet, absolute stillness otherwise.' },
+  { id:'two_girls_embracing', year:'1915', name:'Deux jeunes filles enlacées', desc:'Deux corps féminins, têtes pressées, tissus',
+    style:'Egon Schiele 1915 "Two Girls Embracing", two young women entwined, angular limbs, heads pressed together, eyes closed, raw ink linework, muted dusty rose and ochre, watercolor and gouache on aged paper, tender and clinical',
+    pose:'two young women standing and embracing, limbs entwined, heads pressed together, eyes closed, angular hips and shoulders',
+    video:'Slow rhythmic breathing, subtle shift of the shoulders, heads pressed together, absolute stillness of the eyes.' },
+  { id:'cardinal_nun', year:'1912', name:'Le Cardinal et la Nonne', desc:'Deux figures symboliques, robes, tension morale',
+    style:'Egon Schiele 1912 "Cardinal and Nun", two figures standing one beside the other, a cardinal in red and a nun in black, raw ink outline, flat symbolist composition, muted watercolor on aged paper, moral tension',
+    pose:'two figures standing side by side, one in red cardinal robes, one in black nun robes, both facing the camera, angular hands clasped',
+    video:'Absolute stillness of both figures, very slow rotation of the shoulders, moral tension, muted palette.' },
+  { id:'woman_red', year:'1913', name:'Femme en rouge', desc:'Robe rouge éclatante, visage pâle, contraste brutal',
+    style:'Egon Schiele 1913 "Woman in Red", seated woman in a vivid carmine red dress, pale gaunt face, raw ink contour, muted grey background, watercolor on aged paper, brutal chromatic contrast, unsettling direct gaze',
+    pose:'woman seated, wearing a vivid carmine red dress, pale angular face, direct unsettling gaze, elongated bony hands on the knees',
+    video:'Subtle shift of the dress folds, breathing rhythm, absolute calm gaze, muted palette with the red dress as sole chromatic accent.' },
+  { id:'portrait_edith', year:'1915', name:"Portrait d'Edith Schiele", desc:'Femme assise, robe à pois, mains croisées',
+    style:'Egon Schiele 1915 "Portrait of Edith Schiele", seated woman in a polka-dotted dress, one hand resting on the other, raw ink contour, muted ochre and dusty blue watercolor, unsettled serene expression, watercolor on aged paper',
+    pose:'woman seated upright, wearing a polka-dotted dress, hands resting one on the other on her lap, calm but unsettling gaze, angular shoulders',
+    video:'Very subtle breathing, tiny shift of the hands, absolute calm gaze, muted palette.' },
+  { id:'three_girls', year:'1911', name:'Trois jeunes filles', desc:'Trois corps enlacés, composition triangulaire',
+    style:'Egon Schiele 1911 "Three Girls", three young women intertwined in a triangular composition, angular limbs, heads close together, raw ink linework, muted flesh tones with rose and ochre, watercolor and gouache on aged paper',
+    pose:'three young women standing and intertwined, triangular composition, limbs crossed, heads close together, eyes closed or downcast',
+    video:'Slow rhythmic breathing of the three figures, subtle shift of the shoulders, absolute stillness otherwise.' },
+  { id:'standing_nude', year:'1910', name:'Nu debout', desc:'Corps étiré, mains jointes, vide autour',
+    style:'Egon Schiele 1910 standing nude, gaunt elongated body, arms joined at the wrists above the head, angular hips, raw ink contour, pale flesh with green and ochre undertones, watercolor on aged paper, unsettling stillness',
+    pose:'standing nude, arms joined at the wrists above the head, gaunt elongated silhouette, frontal composition, direct gaze',
+    video:'Subtle breathing, very slow stretch of the arms, absolute stillness of the gaze, muted palette.' },
+  { id:'prophetess', year:'1911', name:'La Prophétesse', desc:'Figure drapée, main levée, regard visionnaire',
+    style:'Egon Schiele 1911 "Prophetess", draped figure with one hand raised, angular face with hollow cheeks, raw ink linework, muted dusty blue and ochre watercolor, symbolist pose, unsettling visionary gaze',
+    pose:'standing figure, one hand raised palm forward, angular draped body, hollow cheeks, visionary gaze straight at the camera',
+    video:'Very slow raise of the hand, breathing visible, absolute stillness of the gaze, muted symbolist ambience.' },
+  { id:'family', year:'1918', name:'La Famille (Die Familie)', desc:'Famille nue assise, enfant au centre, tragédie',
+    style:'Egon Schiele 1918 "Die Familie" (The Family), naked family seated together, father and mother around a small child, gaunt angular bodies, raw ink contour, muted ochre and flesh tones, watercolor and gouache on aged paper, tragic tenderness',
+    pose:'family of three seated together, father and mother around a small child at the center, all frontal, gaunt angular bodies, hands touching',
+    video:'Very subtle breathing of the three figures, gentle protection gesture, absolute stillness of the gaze, tragic muted palette.' }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const state = {
+  apiKeys: [],
+  refImage: null,
+  refName: null,
+  world: null,       // { sex, age_range, face_dna, body_dna, hair_dna, distinctive }
+  concepts: new Set(),
+  queue: [],
+  isRunning: false,
+  stopRequested: false,
+  completed: 0,
+  total: 0,
+  keyIndex: 0,
+  humanLog: [],
+  debugLog: [],
+  lastRawResponse: ''
+};
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowTime = () => new Date().toLocaleTimeString('fr-FR', { hour12: false });
+const fmtEta = s => { if (s < 0 || !isFinite(s)) return ''; return s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's'; };
+const sanitize = t => String(t == null ? '' : t).replace(/[\u2018\u2019\u201B\u2032\u02BC]/g, "'").replace(/[\u201C\u201D\u201F\u2033]/g, '"').replace(/\u2013|\u2014/g, '-').replace(/\u2026/g, '...').replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00A0|\u202F/g, ' ');
+const trunc = (t, n) => { if (!t) return ''; const s = String(t).replace(/\s+/g, ' ').trim(); return s.length <= n ? s : s.slice(0, n - 1) + '…'; };
+
+function human(msg) {
+  state.humanLog.push({ t: nowTime(), m: msg });
+  if (state.humanLog.length > 80) state.humanLog.shift();
+  const el = $('humanLatest'); if (el) el.textContent = msg;
+  renderHuman();
+}
+function renderHuman() {
+  const el = $('humanLog'); if (!el) return;
+  el.innerHTML = state.humanLog.slice(-30).map(e => '<div><span class="t">' + e.t + '</span> <span class="m">' + esc(e.m) + '</span></div>').join('');
+  el.scrollTop = el.scrollHeight;
+}
+function debug(msg, level = 'info', raw) {
+  state.debugLog.push({ t: nowTime(), m: msg, c: level, raw: raw });
+  if (state.debugLog.length > DEBUG_MAX) state.debugLog.shift();
+  renderDebug();
+}
+function renderDebug() {
+  const el = $('debugLog'); if (!el) return;
+  el.innerHTML = state.debugLog.slice(-200).map(e => {
+    let html = '<div><span class="t">' + e.t + '</span> <span class="' + e.c + '">' + esc(e.m) + '</span>';
+    if (e.raw) html += '<span class="raw">' + esc(String(e.raw).slice(0, 1500)) + '</span>';
+    html += '</div>';
+    return html;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+function toast(msg, type = 'success', dur = 2500) {
+  const t = $('toast');
+  t.className = 'toast ' + type + ' visible';
+  $('toastText').textContent = msg;
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.className = 'toast ' + type; }, dur);
+}
+function setStatus(txt) {
+  const b = $('statusBar');
+  if (txt) { b.classList.add('visible'); $('statusText').textContent = txt; }
+  else b.classList.remove('visible');
+}
+function setPhase(detail, eta) {
+  const p = $('phaseBar');
+  p.classList.add('visible');
+  if (detail !== undefined) $('phaseDetail').textContent = detail;
+  if (eta !== undefined) $('phaseEta').textContent = eta;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════════
+const _mem = {};
+let _lsOk = false, _ssOk = false;
+try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); _lsOk = true; } catch (e) {}
+try { sessionStorage.setItem('__t', '1'); sessionStorage.removeItem('__t'); _ssOk = true; } catch (e) {}
+function storageGet(k) {
+  if (_lsOk) { try { const v = localStorage.getItem(k); if (v !== null) return v; } catch (e) {} }
+  if (_ssOk) { try { const v = sessionStorage.getItem(k); if (v !== null) return v; } catch (e) {} }
+  return Object.prototype.hasOwnProperty.call(_mem, k) ? _mem[k] : null;
+}
+function storageSet(k, v) {
+  _mem[k] = String(v);
+  if (_lsOk) { try { localStorage.setItem(k, v); } catch (e) {} }
+  if (_ssOk) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+}
+function storageDel(k) {
+  delete _mem[k];
+  if (_lsOk) { try { localStorage.removeItem(k); } catch (e) {} }
+  if (_ssOk) { try { sessionStorage.removeItem(k); } catch (e) {} }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLÉS API
+// ═══════════════════════════════════════════════════════════════
+function isValidKey(k) { return typeof k === 'string' && k.startsWith('sk-') && k.length >= 15 && k.length <= 200; }
+async function quickPing(key) {
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(API_BASE + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: MODEL_TEXT, messages: [{ role: 'user', content: 'ok' }], max_tokens: 1 }),
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    return res.status !== 401 && res.status !== 403;
+  } catch (e) { return null; }
+}
+async function validateAndSaveKeys() {
+  const raw = $('keysInput').value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (raw.length === 0) { toast('Aucune clé à valider', 'error'); return; }
+  $('validateBtn').disabled = true;
+  $('validateBtn').textContent = '⏳ Validation…';
+  human('🔐 Validation de ' + raw.length + ' clé(s)…');
+  const valid = [];
+  for (let i = 0; i < raw.length; i++) {
+    const k = raw[i];
+    if (!isValidKey(k)) { debug('Clé ' + (i + 1) + ' : format invalide', 'err'); continue; }
+    const ping = await quickPing(k);
+    if (ping === false) { debug('Clé ' + (i + 1) + ' : refusée', 'err'); continue; }
+    valid.push(k);
+    debug('Clé ' + (i + 1) + ' : OK', 'ok');
+  }
+  state.apiKeys = valid;
+  storageSet(KEYS_STORAGE, JSON.stringify(valid));
+  const st = $('keyStatus');
+  if (valid.length > 0) {
+    st.className = 'status ok';
+    $('keyStatusText').textContent = valid.length + ' clé(s) enregistrée(s) · RPM ≈ ' + (valid.length * 12) + '/min';
+    $('rpmInfo').textContent = 'RPM cap ≈ ' + (valid.length * 12);
+  } else {
+    st.className = 'status err';
+    $('keyStatusText').textContent = 'Aucune clé valide';
+  }
+  $('validateBtn').disabled = false;
+  $('validateBtn').textContent = '🔐 Valider et enregistrer';
+  $('keyBadge').textContent = valid.length + ' validée' + (valid.length > 1 ? 's' : '');
+  updateGenBtn();
+  toast(valid.length + ' clé(s) enregistrée(s)', valid.length > 0 ? 'success' : 'error', 3000);
+}
+function getKey() {
+  if (state.apiKeys.length === 0) return '';
+  const k = state.apiKeys[state.keyIndex % state.apiKeys.length];
+  state.keyIndex++;
+  return k;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMAGE (upload local uniquement — jamais envoyée à la génération)
+// ═══════════════════════════════════════════════════════════════
+function compressImg(dataUrl, maxSide) {
+  maxSide = maxSide || REF_MAX_SIDE;
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      const s = Math.min(1, maxSide / Math.max(w, h));
+      w = Math.max(1, Math.round(w * s));
+      h = Math.max(1, Math.round(h * s));
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const x = c.getContext('2d');
+      x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+      x.drawImage(img, 0, 0, w, h);
+      let url = c.toDataURL('image/jpeg', 0.85);
+      let q = 0.85;
+      while (url.length > 1.2 * 1024 * 1024 && q > 0.5) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
+      res(url);
+    };
+    img.onerror = () => res(dataUrl);
+    img.src = dataUrl;
+  });
+}
+async function handleRefFile(f) {
+  if (!f) return;
+  if (!f.type.startsWith('image/')) { toast('Fichier non image', 'error'); return; }
+  if (f.size > 30 * 1024 * 1024) { toast('Image trop lourde (>30 Mo)', 'error'); return; }
+  setStatus('Chargement…');
+  try {
+    const dataUrl = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsDataURL(f);
+    });
+    const compressed = await compressImg(dataUrl);
+    state.refImage = compressed;
+    state.refName = f.name;
+    state.world = null;
+    storageSet(REF_STORAGE, JSON.stringify({ img: compressed, name: f.name }));
+    refreshRefPanel();
+    hideAnalysis();
+    human('📷 Photo chargée : ' + f.name);
+    toast('Photo chargée — cliquez Analyser', 'success');
+  } catch (e) {
+    debug('Erreur image : ' + e.message, 'err');
+    toast('Chargement impossible', 'error');
+  }
+  setStatus(null);
+}
+function refreshRefPanel() {
+  const prev = $('refPreview'), img = $('refPreviewImg'), name = $('refPreviewName');
+  const btn = $('analyzeBtn'), badge = $('refBadge');
+  const has = !!state.refImage;
+  if (has) { img.src = state.refImage; name.textContent = state.refName || ''; prev.classList.remove('hidden'); }
+  else { img.removeAttribute('src'); prev.classList.add('hidden'); }
+  badge.textContent = has ? '1 image' : '0 image';
+  btn.disabled = !has;
+  btn.textContent = state.world ? '🔁 Ré-analyser' : '🔍 Analyser le visage';
+  updateGenBtn();
+}
+function removeRef() {
+  state.refImage = null; state.refName = null; state.world = null;
+  storageDel(REF_STORAGE);
+  refreshRefPanel(); hideAnalysis();
+  $('refInput').value = '';
+  toast('Photo retirée', 'warn');
+}
+function hideAnalysis() { $('analysisBox').classList.remove('visible'); $('analysisBox').innerHTML = ''; }
+function renderAnalysisBox() {
+  const el = $('analysisBox');
+  if (!state.world) { hideAnalysis(); return; }
+  const w = state.world;
+  el.innerHTML =
+    '<span class="k">▸ SEXE / ÂGE</span> ' + esc(w.sex) + ' · ' + esc(w.age_range) + '\n\n' +
+    '<span class="k">▸ VISAGE (VERROUILLÉ)</span> ' + esc(w.face_dna) + '\n\n' +
+    (w.body_dna ? '<span class="k">▸ CORPS</span> ' + esc(w.body_dna) + '\n\n' : '') +
+    (w.hair_dna ? '<span class="k">▸ CHEVEUX</span> ' + esc(w.hair_dna) + '\n\n' : '') +
+    (w.distinctive ? '<span class="k">▸ MARQUES</span> ' + esc(w.distinctive) : '');
+  el.classList.add('visible');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// API CHAT
+// ═══════════════════════════════════════════════════════════════
+async function apiChat(system, user, label, maxTokens, temp) {
+  const key = getKey();
+  if (!key) throw new Error('Aucune clé API');
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 90000);
+  try {
+    const res = await fetch(API_BASE + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL_TEXT,
+        messages: [
+          { role: 'system', content: sanitize(system) },
+          { role: 'user', content: sanitize(user) }
+        ],
+        temperature: temp !== undefined ? temp : 0.4,
+        max_tokens: maxTokens || 2400
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    debug('CHAT ' + label + ' HTTP ' + res.status, res.ok ? 'ok' : 'err');
+    if (!res.ok) { const t = await res.text(); throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 120)); }
+    const d = await res.json();
+    const ch = d.choices && d.choices[0];
+    const content = (ch && ch.message && (ch.message.content || ch.message.reasoning_content)) || null;
+    if (!content) { debug('CHAT ' + label + ' : réponse vide', 'err', JSON.stringify(d).slice(0, 400)); }
+    return content;
+  } catch (e) {
+    clearTimeout(tid);
+    throw e;
+  }
+}
+
+async function apiVision(system, user, imageUrl, label, maxTokens, temp) {
+  const key = getKey();
+  if (!key) throw new Error('Aucune clé API');
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 90000);
+  try {
+    const res = await fetch(API_BASE + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL_TEXT,
+        messages: [
+          { role: 'system', content: sanitize(system) },
+          { role: 'user', content: [
+            { type: 'text', text: sanitize(user) },
+            { type: 'image_url', image_url: { url: imageUrl } }
+          ] }
+        ],
+        temperature: temp !== undefined ? temp : 0.3,
+        max_tokens: maxTokens || 2400
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    debug('VISION ' + label + ' HTTP ' + res.status, res.ok ? 'ok' : 'err');
+    if (!res.ok) { const t = await res.text(); throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 120)); }
+    const d = await res.json();
+    const ch = d.choices && d.choices[0];
+    const content = (ch && ch.message && (ch.message.content || ch.message.reasoning_content)) || null;
+    if (!content) { debug('VISION ' + label + ' : réponse vide', 'err', JSON.stringify(d).slice(0, 400)); }
+    return content;
+  } catch (e) {
+    clearTimeout(tid);
+    throw e;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARSING JSON TRÈS TOLÉRANT
+// ═══════════════════════════════════════════════════════════════
+function extractBalanced(text, openChar, closeChar) {
+  let start = text.indexOf(openChar);
+  if (start < 0) return null;
+  let depth = 0, inStr = false, escNext = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (escNext) { escNext = false; continue; }
+    if (ch === '\\') { escNext = true; continue; }
+    if (ch === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (ch === openChar) depth++;
+    else if (ch === closeChar) { depth--; if (depth === 0) return text.slice(start, i + 1); }
+  }
+  return null;
+}
+function repairJson(text) {
+  if (!text) return null;
+  let c = String(text).trim();
+  const fm = c.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fm) c = fm[1].trim();
+  const fb = c.indexOf('{'); if (fb < 0) return null;
+  c = c.slice(fb);
+  const lb = c.lastIndexOf('}'); if (lb > 0) c = c.slice(0, lb + 1);
+  let out = '', inS = false, esc2 = false;
+  for (let i = 0; i < c.length; i++) {
+    const ch = c[i];
+    if (esc2) { if ('"\\/bfnrtu'.includes(ch)) out += '\\' + ch; else out += ch; esc2 = false; continue; }
+    if (ch === '\\') { esc2 = true; continue; }
+    if (ch === '"') { inS = !inS; out += ch; continue; }
+    if (inS) {
+      if (ch === '\n') out += '\\n';
+      else if (ch === '\r') out += '\\r';
+      else if (ch === '\t') out += '\\t';
+      else if (ch.charCodeAt(0) < 32) out += '\\u' + ch.charCodeAt(0).toString(16).padStart(4, '0');
+      else out += ch;
+      continue;
+    }
+    out += ch;
+  }
+  if (esc2) out += '\\';
+  if (inS) out += '"';
+  return out.replace(/,\s*([}\]])/g, '$1');
+}
+function tryParseJson(text) {
+  if (!text) return null;
+  const raw = String(text);
+  const objText = extractBalanced(raw, '{', '}');
+  if (objText) {
+    try { return JSON.parse(objText); } catch (e) {}
+    const rep = repairJson(objText);
+    if (rep) { try { return JSON.parse(rep); } catch (e) {} }
+  }
+  const rep2 = repairJson(raw);
+  if (rep2) { try { return JSON.parse(rep2); } catch (e) {} }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYSE TOLÉRANTE — accepte JSON, texte, ou tout mélange
+// ═══════════════════════════════════════════════════════════════
+async function analyzeCharacter(dataUrl) {
+  const sys = [
+    'You are a forensic portrait analyst and beauty editor.',
+    'You describe a face with enough precision that a text-to-image AI can recreate the EXACT same person across dozens of artistic styles.',
+    '',
+    'Output ONLY valid JSON with these exact keys:',
+    'sex, age_range, face_dna, body_dna, hair_dna, distinctive.',
+    '',
+    'sex: "female" or "male"',
+    'age_range: e.g. "mid twenties"',
+    'face_dna: 100-140 words in ENGLISH, forensic description of the face',
+    'body_dna: 30-50 words in ENGLISH',
+    'hair_dna: 30-50 words in ENGLISH',
+    'distinctive: 15-30 words in ENGLISH',
+    '',
+    'Output ONLY the JSON object. Start with { and end with }.',
+    'No markdown. No code fences. No commentary before or after.'
+  ].join(' ');
+
+  const usr = 'Analyse this image with EXTREME forensic precision. Output ONLY the JSON object.';
+  const raw = await apiVision(sys, usr, dataUrl, 'Analyse', 2400, 0.3);
+  state.lastRawResponse = raw || '';
+  if (!raw) throw new Error('Réponse vide du modèle');
+
+  // 1) Tentative JSON directe
+  const p = tryParseJson(raw);
+  if (p && p.face_dna && String(p.face_dna).length > 30) {
+    return buildWorld(p);
+  }
+
+  // 2) Tentative JSON avec tolérance sur les clés
+  if (p) {
+    const faceCandidate = p.face_dna || p.face || p.description || p.portrait || p.visual || p.character || p.face_description;
+    if (faceCandidate && String(faceCandidate).length > 30) {
+      return buildWorld({
+        sex: p.sex || p.gender,
+        age_range: p.age_range || p.age,
+        face_dna: faceCandidate,
+        body_dna: p.body_dna || p.body || '',
+        hair_dna: p.hair_dna || p.hair || '',
+        distinctive: p.distinctive || p.distinctive_features || ''
+      });
+    }
+  }
+
+  // 3) Fallback : utiliser le texte brut comme face_dna
+  debug('Parsing JSON impossible — utilisation du texte brut', 'warn', raw.slice(0, 800));
+  const cleanText = raw.replace(/```(?:json)?/g, '').replace(/[{}"\\]/g, '').replace(/sex\s*:\s*\w+/i, '').replace(/age_range\s*:\s*[^\n,.]+/i, '').replace(/\s+/g, ' ').trim();
+  if (cleanText.length > 60) {
+    return buildWorld({
+      sex: /female|femme|woman/i.test(raw) ? 'female' : 'male',
+      age_range: 'adult',
+      face_dna: cleanText.slice(0, 800),
+      body_dna: '',
+      hair_dna: '',
+      distinctive: ''
+    });
+  }
+
+  throw new Error('Impossible d\'extraire une description du visage');
+}
+
+function buildWorld(p) {
+  const sex = /^f|fem|woman|girl/i.test(String(p.sex || '')) ? 'female' : 'male';
+  return {
+    sex: sex,
+    age_range: String(p.age_range || '').trim() || 'adult',
+    face_dna: String(p.face_dna || '').trim().replace(/\s+/g, ' '),
+    body_dna: String(p.body_dna || '').trim().replace(/\s+/g, ' '),
+    hair_dna: String(p.hair_dna || '').trim().replace(/\s+/g, ' '),
+    distinctive: String(p.distinctive || '').trim().replace(/\s+/g, ' ')
+  };
+}
+
+async function runAnalysis() {
+  if (!state.refImage) { toast('Ajoutez une photo', 'error'); return; }
+  if (state.apiKeys.length === 0) { toast('Ajoutez une clé API', 'error'); return; }
+  $('analyzeBtn').disabled = true;
+  $('analyzeBtn').textContent = '⏳ Analyse…';
+  setStatus('Analyse du visage…');
+  human('🔍 Analyse forensique…');
+  $('rawPanel').classList.remove('visible');
+  $('manualBox').classList.remove('visible');
+  try {
+    state.world = await analyzeCharacter(state.refImage);
+    renderAnalysisBox();
+    refreshRefPanel();
+    human('✅ Analyse OK · ' + state.world.sex + ' · ' + state.world.age_range);
+    toast('Analyse terminée', 'success', 2000);
+  } catch (e) {
+    debug('Analyse impossible : ' + e.message, 'err', state.lastRawResponse ? state.lastRawResponse.slice(0, 1200) : '');
+    human('❌ Analyse impossible — essayez le mode manuel');
+    toast('Analyse impossible — utilisez le fallback manuel ci-dessous', 'error', 4000);
+    // Afficher le panneau brut + le mode manuel
+    if (state.lastRawResponse) {
+      const rp = $('rawPanel');
+      rp.textContent = '⚠ Réponse brute du modèle :\n\n' + state.lastRawResponse.slice(0, 3000);
+      rp.classList.add('visible');
+    }
+    $('manualBox').classList.add('visible');
+  } finally {
+    $('analyzeBtn').disabled = false;
+    $('analyzeBtn').textContent = state.world ? '🔁 Ré-analyser' : '🔍 Analyser le visage';
+    setStatus(null);
+  }
+}
+
+function applyManual() {
+  const sexRaw = ($('manualSex').value || '').trim();
+  const ageRaw = ($('manualAge').value || '').trim();
+  const faceRaw = ($('manualFaceDna').value || '').trim();
+  if (!faceRaw || faceRaw.length < 40) { toast('Description trop courte (min 40 caractères)', 'error'); return; }
+  const sex = /^f|fem|woman|girl/i.test(sexRaw) ? 'female' : 'male';
+  state.world = {
+    sex: sex,
+    age_range: ageRaw || 'adult',
+    face_dna: faceRaw,
+    body_dna: '',
+    hair_dna: '',
+    distinctive: '',
+    _manual: true
+  };
+  storageSet(MANUAL_STORAGE, JSON.stringify(state.world));
+  renderAnalysisBox();
+  refreshRefPanel();
+  $('manualBox').classList.remove('visible');
+  $('rawPanel').classList.remove('visible');
+  human('✅ Description manuelle appliquée');
+  toast('Description manuelle appliquée', 'success', 2000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// API IMAGE — 100% texte-vers-image
+// ═══════════════════════════════════════════════════════════════
+async function apiImage(prompt) {
+  const key = getKey();
+  if (!key) throw new Error('Aucune clé API');
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (state.stopRequested) throw new Error('Arrêt');
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 90000);
+    try {
+      // ★ Payload texte-vers-image pur — AUCUN extra_body.image
+      const body = {
+        model: MODEL_IMAGE,
+        prompt: sanitize(prompt),
+        n: 1,
+        size: IMAGE_SIZE,
+        extra_body: { response_format: 'url' }
+      };
+      const res = await fetch(API_BASE + '/images/generations', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(tid);
+      debug('IMG HTTP ' + res.status + ' · essai ' + (attempt + 1) + '/' + MAX_ATTEMPTS, res.ok ? 'ok' : 'warn');
+      if (res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) {
+        const wait = Math.min(60, 6 + attempt * 6);
+        await sleep(wait * 1000);
+        continue;
+      }
+      if (!res.ok) {
+        const t = await res.text().catch(() => '');
+        if (attempt < MAX_ATTEMPTS - 1 && res.status < 500 && res.status !== 400) {
+          await sleep(3000 + attempt * 2000);
+          continue;
+        }
+        throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 100));
+      }
+      const d = await res.json();
+      const item = d.data && d.data[0];
+      if (item && item.url) return item.url;
+      if (item && item.b64_json) return 'data:image/png;base64,' + item.b64_json;
+      throw new Error('Réponse sans image');
+    } catch (e) {
+      clearTimeout(tid);
+      if (e.message === 'Arrêt' || state.stopRequested) throw new Error('Arrêt');
+      const isAbort = e.name === 'AbortError';
+      if (attempt < MAX_ATTEMPTS - 1) {
+        await sleep(isAbort ? 5000 : 3000);
+        continue;
+      }
+      throw new Error(isAbort ? 'Timeout' : e.message);
+    }
+  }
+  throw new Error('Échec après ' + MAX_ATTEMPTS + ' tentatives');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROMPT BUILDER
+// ═══════════════════════════════════════════════════════════════
+function buildPrompt(concept) {
+  const w = state.world || {};
+  const sexLabel = w.sex === 'female' ? 'woman' : 'man';
+  const P = [];
+  P.push('════════ EGON SCHIELE STYLE ════════');
+  P.push(concept.style);
+  P.push('');
+  P.push('════════ CHARACTER — IDENTICAL ACROSS ALL IMAGES ════════');
+  P.push('This is a ' + sexLabel + ', ' + (w.age_range || 'adult') + '.');
+  P.push('FACE (do not alter any feature): ' + (w.face_dna || 'as reference'));
+  if (w.body_dna) P.push('BODY: ' + w.body_dna);
+  if (w.hair_dna) P.push('HAIR: ' + w.hair_dna);
+  if (w.distinctive) P.push('DISTINCTIVE FEATURE: ' + w.distinctive);
+  P.push('');
+  P.push('════════ POSE / COMPOSITION ════════');
+  P.push(concept.pose + '.');
+  P.push('');
+  P.push('════════ TECHNIQUE SCHIELE ════════');
+  P.push('- Raw expressive black ink contour lines, visible and unpolished.');
+  P.push('- Angular, gaunt, distorted anatomy — bones visible, elongated limbs and hands.');
+  P.push('- Muted watercolor and gouache on visible aged paper.');
+  P.push('- Palette: dusty ochre, brown-red shadows, pale flesh, occasional carmine red accent.');
+  P.push('- Viennese Expressionism 1910s, unsettling intimate atmosphere.');
+  P.push('');
+  P.push('════════ ABSOLUTE RULES ════════');
+  P.push('- The FACE is IDENTICAL to the reference description above.');
+  P.push('- This is a hand-painted ARTWORK, NOT a photograph. Real visible brush strokes, ink lines, paper grain.');
+  P.push('- Vertical 9:16 composition.');
+  P.push('- NO text, NO watermark, NO signature in the image.');
+  P.push('- Not photorealistic, not 3D, not CGI, not digital illustration.');
+  return P.join('\n');
+}
+
+function buildVideoPrompt(concept) {
+  return 'Animated painting in the style of Egon Schiele 1910s Viennese Expressionism. ' + concept.video + ' Muted watercolor and gouache palette, visible paper grain, raw ink lines. Duration 5 seconds. Vertical 9:16. No music.';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONCEPT GRID
+// ═══════════════════════════════════════════════════════════════
+function renderConceptGrid() {
+  const grid = $('conceptGrid');
+  grid.innerHTML = '';
+  CONCEPTS.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'concept' + (state.concepts.has(c.id) ? ' on' : '');
+    card.dataset.id = c.id;
+    card.innerHTML =
+      '<div class="year">' + esc(c.year) + '</div>' +
+      '<div class="name">' + esc(c.name) + '</div>' +
+      '<div class="desc">' + esc(c.desc) + '</div>';
+    card.onclick = () => {
+      if (state.isRunning) return;
+      if (state.concepts.has(c.id)) state.concepts.delete(c.id);
+      else state.concepts.add(c.id);
+      card.classList.toggle('on');
+      updateConceptBadge();
+      updateGenBtn();
+    };
+    grid.appendChild(card);
+  });
+  updateConceptBadge();
+}
+function updateConceptBadge() {
+  $('conceptBadge').textContent = state.concepts.size + ' sélectionné' + (state.concepts.size > 1 ? 's' : '');
+  const info = $('controlInfo');
+  if (state.concepts.size === 0) {
+    info.innerHTML = 'Sélectionnez un ou plusieurs concepts ci-dessus, puis lancez la génération.';
+  } else {
+    const count = Math.max(1, parseInt($('countInput').value || '3', 10) || 3);
+    const total = state.concepts.size * count;
+    info.innerHTML = '<span class="sel">' + state.concepts.size + ' concept(s)</span> sélectionné(s) · <span class="sel">' + count + '</span> image(s) par concept · Total : <strong>' + total + '</strong>';
+  }
+  storageSet(CONCEPTS_STORAGE, JSON.stringify([...state.concepts]));
+}
+function selectAll() { CONCEPTS.forEach(c => state.concepts.add(c.id)); renderConceptGrid(); updateGenBtn(); }
+function selectNone() { state.concepts.clear(); renderConceptGrid(); updateGenBtn(); }
+
+function updateGenBtn() {
+  const btn = $('genBtn');
+  const canRun = state.apiKeys.length > 0 && state.world && state.concepts.size > 0 && !state.isRunning;
+  btn.disabled = !canRun;
+  if (state.isRunning) btn.textContent = 'Génération en cours…';
+  else if (state.apiKeys.length === 0) btn.textContent = 'Ajoutez une clé API';
+  else if (!state.world) btn.textContent = 'Analysez d\'abord la photo (ou utilisez le mode manuel)';
+  else if (state.concepts.size === 0) btn.textContent = 'Sélectionnez un concept';
+  else btn.textContent = '✦ Générer ' + (state.concepts.size * Math.max(1, parseInt($('countInput').value || '3', 10) || 3)) + ' image(s)';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GÉNÉRATION
+// ═══════════════════════════════════════════════════════════════
+function buildQueue() {
+  const count = Math.max(1, Math.min(10, parseInt($('countInput').value || '3', 10) || 3));
+  const tasks = [];
+  CONCEPTS.forEach(c => {
+    if (!state.concepts.has(c.id)) return;
+    for (let i = 0; i < count; i++) {
+      tasks.push({
+        uid: 'task_' + c.id + '_' + i,
+        concept: c,
+        index: i + 1,
+        of: count,
+        label: c.name + ' · #' + (i + 1),
+        fullPrompt: buildPrompt(c),
+        videoPrompt: buildVideoPrompt(c),
+        status: 'pending',
+        url: null,
+        error: null
+      });
+    }
+  });
+  return tasks;
+}
+
+function cardHTML(task) {
+  let imgHtml;
+  if (task.url && task.url !== 'error') imgHtml = '<img src="' + task.url + '" loading="lazy" alt="">';
+  else if (task.url === 'error') imgHtml = '<div class="err">✕ Échec<br><small>' + esc(trunc(task.error || '', 60)) + '</small></div>';
+  else imgHtml = '<div class="load"><span style="font-size:1.4rem">🎨</span>Peinture…</div>';
+  return '<div class="photo-img">' + imgHtml + '</div>' +
+    '<div class="photo-meta">' +
+    '<div>' +
+    '<span class="pbadge schiele">✦ Schiele</span>' +
+    '<span class="pbadge num">' + task.concept.year + '</span>' +
+    '<span class="pbadge num">#' + task.index + '/' + task.of + '</span>' +
+    '</div>' +
+    '<div class="ptitle">' + esc(task.concept.name) + '</div>' +
+    '<div class="pblock">' +
+    '<div class="plabel">📸 Prompt image</div>' +
+    '<button class="pcopy" data-copy="' + esc(task.fullPrompt) + '">Copier</button>' +
+    '<div class="ptext">' + esc(task.fullPrompt) + '</div>' +
+    '</div>' +
+    '<div class="pblock video">' +
+    '<div class="plabel">🎬 Prompt vidéo Google Flow</div>' +
+    '<button class="pcopy" data-copy="' + esc(task.videoPrompt) + '">Copier</button>' +
+    '<div class="ptext">' + esc(task.videoPrompt) + '</div>' +
+    '</div>' +
+    (task.url && task.url !== 'error' ? '<a class="popen" href="' + task.url + '" target="_blank" rel="noopener">Ouvrir</a>' : '') +
+    '</div>';
+}
+function attachCopy(card) {
+  card.querySelectorAll('[data-copy]').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const ta = document.createElement('textarea');
+      ta.value = b.dataset.copy;
+      ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (er) {}
+      document.body.removeChild(ta);
+      toast(ok ? 'Copié' : 'Copie impossible', ok ? 'success' : 'error', 1500);
+    };
+  });
+}
+function renderCard(task) {
+  const grid = $('photoGrid');
+  const card = document.createElement('div');
+  card.className = 'photo';
+  card.dataset.uid = task.uid;
+  card.innerHTML = cardHTML(task);
+  grid.appendChild(card);
+  attachCopy(card);
+}
+function updateCard(task) {
+  const old = document.querySelector('.photo[data-uid="' + task.uid + '"]');
+  if (!old) { renderCard(task); return; }
+  const card = document.createElement('div');
+  card.className = 'photo';
+  card.dataset.uid = task.uid;
+  card.innerHTML = cardHTML(task);
+  old.replaceWith(card);
+  attachCopy(card);
+}
+function updateProgress() {
+  $('totalCount').textContent = state.completed + ' / ' + state.total;
+  $('queueCount').textContent = state.queue.length;
+  $('resultsCount').textContent = state.completed + ' / ' + state.total;
+  const fill = $('progressFill');
+  const pct = state.total > 0 ? Math.round((state.completed / state.total) * 100) : 0;
+  fill.style.width = pct + '%';
+  fill.classList.toggle('done', pct >= 100);
+}
+
+async function runGeneration() {
+  if (state.isRunning) return;
+  if (!state.world) { toast('Analysez d\'abord la photo', 'error'); return; }
+  if (state.concepts.size === 0) { toast('Sélectionnez au moins un concept', 'error'); return; }
+  if (state.apiKeys.length === 0) { toast('Ajoutez une clé API', 'error'); return; }
+
+  state.isRunning = true;
+  state.stopRequested = false;
+  state.completed = 0;
+  state.keyIndex = 0;
+  $('photoGrid').innerHTML = '';
+  $('resultsHeader').classList.remove('hidden');
+  $('stopBtn').classList.add('visible');
+  $('progressFill').style.width = '0%';
+  updateGenBtn();
+
+  const queue = buildQueue();
+  state.queue = queue;
+  state.total = queue.length;
+  updateProgress();
+
+  human('✦ Génération de ' + queue.length + ' image(s)…');
+  debug('Queue : ' + queue.length + ' tâches · clés=' + state.apiKeys.length + ' · mode=texte-vers-image pur', 'api');
+  setPhase('🎨 Peinture en cours…', '~' + fmtEta(queue.length * 12 / Math.max(1, state.apiKeys.length)));
+  setStatus('Génération en cours…');
+
+  const nKeys = state.apiKeys.length;
+  const lastStartPerKey = {};
+  let idx = 0;
+
+  async function worker(slot) {
+    while (!state.stopRequested && idx < queue.length) {
+      const myIdx = idx++;
+      const task = queue[myIdx];
+      if (!task) return;
+      const keySlot = slot % nKeys;
+      const now = Date.now();
+      const wait = Math.max(0, (lastStartPerKey[keySlot] || 0) + DELAY_PER_KEY_MS - now);
+      lastStartPerKey[keySlot] = Date.now() + wait;
+      if (wait > 0) await sleep(wait);
+      if (state.stopRequested) return;
+
+      task.status = 'generating';
+      updateCard(task);
+      try {
+        task.url = await apiImage(task.fullPrompt);
+        state.completed++;
+        debug('✔ ' + task.concept.name + ' #' + task.index, 'ok');
+        human('🎨 ' + state.completed + '/' + state.total + ' · ' + task.concept.name);
+      } catch (e) {
+        if (e.message === 'Arrêt') { task.status = 'pending'; return; }
+        task.url = 'error';
+        task.error = e.message;
+        state.completed++;
+        debug('✘ ' + task.concept.name + ' · ' + e.message, 'err');
+      }
+      task.status = 'done';
+      updateCard(task);
+      updateProgress();
+      setPhase('🎨 ' + state.completed + ' / ' + state.total, '~' + fmtEta((state.total - state.completed) * 12 / Math.max(1, nKeys)));
+    }
+  }
+
+  await Promise.all(Array.from({ length: nKeys }, (_, i) => worker(i)));
+
+  state.isRunning = false;
+  state.stopRequested = false;
+  $('stopBtn').classList.remove('visible');
+  setStatus(null);
+  setPhase('✦ Terminé — ' + state.completed + ' image(s)', '');
+  updateGenBtn();
+  toast(state.completed + ' image(s) générée(s)', 'success', 3500);
+}
+
+function stopGeneration() {
+  if (!state.isRunning) return;
+  state.stopRequested = true;
+  human('⏹ Arrêt demandé…');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+function bind() {
+  $('validateBtn').onclick = validateAndSaveKeys;
+  $('clearBtn').onclick = () => {
+    $('keysInput').value = '';
+    state.apiKeys = [];
+    storageDel(KEYS_STORAGE);
+    $('keyStatus').className = 'status';
+    $('keyStatusText').textContent = 'Aucune clé enregistrée';
+    $('keyBadge').textContent = '0 validée';
+    updateGenBtn();
+    toast('Clés effacées', 'warn');
+  };
+
+  $('refInput').onchange = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) handleRefFile(f);
+    e.target.value = '';
+  };
+  $('removeRefBtn').onclick = removeRef;
+  $('analyzeBtn').onclick = runAnalysis;
+
+  $('applyManualBtn').onclick = applyManual;
+
+  $('selectAllBtn').onclick = selectAll;
+  $('selectNoneBtn').onclick = selectNone;
+  $('countInput').oninput = () => { updateConceptBadge(); updateGenBtn(); };
+  $('genBtn').onclick = runGeneration;
+  $('stopBtn').onclick = stopGeneration;
+
+  const handle = $('panelHandle');
+  const content = $('panelContent');
+  const toggle = $('panelToggle');
+  let open = false;
+  handle.onclick = (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    open = !open;
+    content.classList.toggle('hidden', !open);
+    toggle.textContent = (open ? '▲' : '▼') + ' CONSOLE';
+  };
+  $('copyConsoleBtn').onclick = (e) => {
+    e.stopPropagation();
+    const txt = state.debugLog.map(d => d.t + ' ' + d.m + (d.raw ? '\n' + d.raw : '')).join('\n');
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (er) {}
+    document.body.removeChild(ta);
+    toast(ok ? 'Console copiée' : 'Copie impossible', ok ? 'success' : 'error', 1500);
+  };
+  $('clearConsoleBtn').onclick = (e) => {
+    e.stopPropagation();
+    state.debugLog = [];
+    renderDebug();
+    toast('Console effacée', 'warn', 1200);
+  };
+
+  // Restore
+  try {
+    const saved = JSON.parse(storageGet(KEYS_STORAGE) || '[]');
+    if (Array.isArray(saved) && saved.length > 0) {
+      state.apiKeys = saved.filter(isValidKey);
+      $('keysInput').value = saved.join('\n');
+      if (state.apiKeys.length > 0) {
+        $('keyStatus').className = 'status ok';
+        $('keyStatusText').textContent = state.apiKeys.length + ' clé(s) restaurée(s)';
+        $('keyBadge').textContent = state.apiKeys.length + ' validée' + (state.apiKeys.length > 1 ? 's' : '');
+        $('rpmInfo').textContent = 'RPM cap ≈ ' + (state.apiKeys.length * 12);
+      }
+    }
+  } catch (e) {}
+
+  try {
+    const refRaw = storageGet(REF_STORAGE);
+    if (refRaw) {
+      const d = JSON.parse(refRaw);
+      if (d && typeof d.img === 'string' && d.img.startsWith('data:image/')) {
+        state.refImage = d.img;
+        state.refName = d.name || 'référence';
+        human('📷 Photo restaurée');
+      }
+    }
+  } catch (e) {}
+
+  try {
+    const manual = JSON.parse(storageGet(MANUAL_STORAGE) || 'null');
+    if (manual && manual.face_dna) {
+      state.world = manual;
+      renderAnalysisBox();
+      human('✍️ Description manuelle restaurée');
+    }
+  } catch (e) {}
+
+  try {
+    const savedConcepts = JSON.parse(storageGet(CONCEPTS_STORAGE) || '[]');
+    if (Array.isArray(savedConcepts)) {
+      state.concepts = new Set(savedConcepts.filter(id => CONCEPTS.some(c => c.id === id)));
+    }
+  } catch (e) {}
+
+  renderConceptGrid();
+  refreshRefPanel();
+  updateGenBtn();
+
+  human('✦ Egon Schiele Lab v2 prêt · 20 concepts · texte-vers-image pur');
+  debug('Egon Schiele Lab v2 · ' + CONCEPTS.length + ' concepts · modèle=' + MODEL_IMAGE + ' · size=' + IMAGE_SIZE, 'api');
+  debug('Génération 100% texte-vers-image · analyse vision tolérante · fallback manuel activé', 'api');
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+else bind();
+</script>
+</body>
+</html>
