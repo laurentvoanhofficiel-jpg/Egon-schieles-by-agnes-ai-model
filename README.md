@@ -1,3 +1,6 @@
+j'ai utilisé l'intelligence artificielle pour créer ses codes alors il vous suffit d'aller sur cet URL pour comprendre comment il marche et pour le modifier immédiatement 
+https://chat.deepseek.com/share/3yae3l0nntan8qqiug
+
 # 🎨 Egon Schiele Lab — Générateur d'œuvres par Agnes AI
 
 **Transformez une simple photo en une série de portraits et de scènes stylisées par Egon Schiele, en conservant uniquement le visage, les habits et le décor — la palette de couleurs est entièrement celle de l'artiste viennois.**
